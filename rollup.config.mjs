@@ -17,7 +17,7 @@ const importsGeneral = {
   'gi://St?version=16': { name: 'gi://St' },
 
   // non core dependencies (can have version specifier!)
-  'gi://Gda?version=5.0': { name: 'gi://Gda?version>=5.0' }, // We officially support (it's also typed!) both 5.0 and 6.0
+  'gi://Gom?version=1.0': { name: 'gi://Gom' },
   'gi://GSound?version=1.0': { name: 'gi://GSound' },
   'gi://GObject?version=2.0': { name: 'gi://GObject' },
   'gi://GLib?version=2.0': { name: 'gi://GLib' },

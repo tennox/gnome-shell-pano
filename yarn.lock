@@ -376,28 +376,6 @@
     "@girs/gmodule-2.0" "^2.0.0-4.0.0-beta.23"
     "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
 
-"@girs/gda-5.0@5.0.0-4.0.0-beta.23":
-  version "5.0.0-4.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/@girs/gda-5.0/-/gda-5.0-5.0.0-4.0.0-beta.23.tgz#5652aaeaeab0b1d9614df350cedfbdde2ae9bc4c"
-  integrity sha512-bBrfBCjeeiVOFWCJfO5grjG7vl+G65K6XzhTMW1JD7gtveZnfqKIerFcfzS57mu8CwG3s9MywzShKCbWHCkVTQ==
-  dependencies:
-    "@girs/gjs" "^4.0.0-beta.23"
-    "@girs/glib-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/libxml2-2.0" "^2.0.0-4.0.0-beta.23"
-
-"@girs/gda-6.0@6.0.0-4.0.0-beta.23":
-  version "6.0.0-4.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/@girs/gda-6.0/-/gda-6.0-6.0.0-4.0.0-beta.23.tgz#55ec36a572057eea86bfe8720aa79030d6f0f564"
-  integrity sha512-aHKBA8FUyvPKnMtYpLmqWhINMNnoD3i8idR8fn1UZzWAuWtZGkan4MXi0iCnn8AdW8zgPxw8v3OTGdnI16EAig==
-  dependencies:
-    "@girs/gio-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/gjs" "^4.0.0-beta.23"
-    "@girs/glib-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/gmodule-2.0" "^2.0.0-4.0.0-beta.23"
-    "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/libxml2-2.0" "^2.0.0-4.0.0-beta.23"
-
 "@girs/gdesktopenums-3.0@^3.0.0-4.0.0-beta.23":
   version "3.0.0-4.0.0-beta.23"
   resolved "https://registry.yarnpkg.com/@girs/gdesktopenums-3.0/-/gdesktopenums-3.0-3.0.0-4.0.0-beta.23.tgz#9608b00f3b9b2e8ee8ba6cf888633091453ddde9"
@@ -571,6 +549,17 @@
     "@girs/gjs" "^4.0.0-beta.23"
     "@girs/glib-2.0" "^2.84.0-4.0.0-beta.23"
 
+"@girs/gom-1.0@1.0.0-4.0.0-beta.23":
+  version "1.0.0-4.0.0-beta.23"
+  resolved "https://registry.yarnpkg.com/@girs/gom-1.0/-/gom-1.0-1.0.0-4.0.0-beta.23.tgz#99c96ae3a08ac4b4ef8262ab9034fee875619714"
+  integrity sha512-kDujgPsYISaAwGzx/ItG/rud5jscZT1RZ9MIbkXGzZXEJCLtzTR61lKLpVGvpgiAYJBqYXMhcMgpfxR8tsqsfw==
+  dependencies:
+    "@girs/gio-2.0" "^2.84.0-4.0.0-beta.23"
+    "@girs/gjs" "^4.0.0-beta.23"
+    "@girs/glib-2.0" "^2.84.0-4.0.0-beta.23"
+    "@girs/gmodule-2.0" "^2.0.0-4.0.0-beta.23"
+    "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
+
 "@girs/graphene-1.0@1.0.0-4.0.0-beta.23", "@girs/graphene-1.0@^1.0.0-4.0.0-beta.23":
   version "1.0.0-4.0.0-beta.23"
   resolved "https://registry.yarnpkg.com/@girs/graphene-1.0/-/graphene-1.0-1.0.0-4.0.0-beta.23.tgz#bc931dd475ff896e41a23a7805907e4cc626e114"
@@ -649,14 +638,6 @@
     "@girs/freetype2-2.0" "^2.0.0-4.0.0-beta.23"
     "@girs/gjs" "^4.0.0-beta.23"
     "@girs/glib-2.0" "^2.84.0-4.0.0-beta.23"
-    "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
-
-"@girs/libxml2-2.0@^2.0.0-4.0.0-beta.23":
-  version "2.0.0-4.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/@girs/libxml2-2.0/-/libxml2-2.0-2.0.0-4.0.0-beta.23.tgz#7236c9a4e7ca4bcd36dbcd5a215ae39033ef25c0"
-  integrity sha512-yyXsOW525TyqTnkPkm5jXhmCYSOxhJNhqN7hu2K2De1yA1i8MFnf4Ojndbnwc+PDLCmVDDnXZRwd5U8xScdzDQ==
-  dependencies:
-    "@girs/gjs" "^4.0.0-beta.23"
     "@girs/gobject-2.0" "^2.84.0-4.0.0-beta.23"
 
 "@girs/meta-16@^16.0.0-4.0.0-beta.23":
