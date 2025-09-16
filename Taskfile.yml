@@ -1,0 +1,23 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  build:
+    desc: "Build the extension"
+    cmds:
+      - yarn build
+
+  dev:
+    desc: "Build and test extension in nested GNOME Shell session"
+    deps: [build]
+    cmds:
+      - ./test-nested.nu nested
