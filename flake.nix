@@ -1,12 +1,12 @@
 {
-  # docs: https://devenv.sh/guides/using-with-flakes/#the-flakenix-file
+  description = "Pano - Next-gen Clipboard Manager for GNOME Shell (with libgom)";
 
   inputs = {
-    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling"; # (i) https://devenv.sh/blog/2024/03/20/devenv-10-rewrite-in-rust/#testing-infrastructure
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     devenv.url = "github:cachix/devenv";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    systems.url = "github:nix-systems/default"; # (i) allows overriding systems easily, see https://github.com/nix-systems/nix-systems#consumer-usage
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, devenv, systems, flake-parts, ... } @ inputs: (
@@ -15,13 +15,25 @@
       imports = [
         inputs.devenv.flakeModule
       ];
-      # perSystem docs: https://flake.parts/module-arguments.html#persystem-module-parameters
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
 
+      perSystem = { config, self', inputs', pkgs, system, ... }: {
+        # Development shell
         devenv.shells.default = {
           imports = [ ./devenv.nix ];
         };
 
+        # Extension package
+        packages.default = pkgs.callPackage ./default.nix {
+          gom = pkgs.gom;
+          gsound = pkgs.gsound;
+        };
+      };
+
+      flake = {
+        # Overlay for easy integration into NixOS configs
+        overlays.default = final: prev: {
+          gnome-shell-extension-pano-gom = self.packages.${final.system}.default;
+        };
       };
     }
   );
