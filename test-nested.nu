@@ -53,16 +53,24 @@ def test_nested_wayland [] {
     print "   - Press Alt+F2 and type 'r' to restart shell if needed"
     print "   - Use Ctrl+Alt+Shift+R to enable looking glass for debugging"
     print "   - Close the nested window to exit"
-    
+
     $env.GNOME_SHELL_EXTENSION_DIR = "/tmp/gnome-shell-test-extensions"
     $env.MUTTER_DEBUG_DUMMY_MODE_SPECS = "1200x800"
     $env.MUTTER_DEBUG_DUMMY_MONITOR_SCALES = "1"
-    
+
+    # Add Gom typelib path for libgom database support
+    let gom_typelib_path = "/nix/store/32mj4p8wzn03cx7zvaydz298zk0sc64p-gom-0.5.3/lib/girepository-1.0"
+    $env.GI_TYPELIB_PATH = if ($env.GI_TYPELIB_PATH? | is-empty) {
+        $gom_typelib_path
+    } else {
+        $"($gom_typelib_path):($env.GI_TYPELIB_PATH)"
+    }
+    print $"   - GI_TYPELIB_PATH: ($env.GI_TYPELIB_PATH)"
+
     try {
         ^dbus-run-session gnome-shell --nested --wayland
     } catch {
-        print "❌ Nested session failed. Your GNOME version might not support --nested."
-        print "   Try running with: test-nested.nu xephyr"
+        print "❌ Nested session failed."
     }
 }
 

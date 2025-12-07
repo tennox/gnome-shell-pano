@@ -1,6 +1,9 @@
-import Gom from '@girs/gom-1.0';
-import GObject from '@girs/gobject-2.0';
-import GLib from '@girs/glib-2.0';
+// Hardcode Gom typelib path for NixOS
+imports.gi.GIRepository.Repository.prepend_search_path('/nix/store/32mj4p8wzn03cx7zvaydz298zk0sc64p-gom-0.5.3/lib/girepository-1.0');
+
+const GObject = (imports.gi as any).GObject as any;
+const GLib = (imports.gi as any).GLib as any;
+const Gom = (imports.gi as any).Gom;
 import { logger } from '@pano/utils/shell';
 
 const debug = logger('database');
@@ -19,6 +22,94 @@ export type DBItem = {
 };
 
 export type SaveDBItem = Omit<DBItem, 'id'>;
+
+// Define ClipboardResource class extending Gom.Resource
+const ClipboardResource = GObject.registerClass(
+  {
+    GTypeName: 'PanoClipboardResource',
+    Extends: Gom.Resource,
+    Properties: {
+      'id': GObject.ParamSpec.int(
+        'id', 'ID', 'Resource ID',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        0, 2147483647, 0
+      ),
+      'item-type': GObject.ParamSpec.string(
+        'item-type', 'Item Type', 'Type of clipboard item',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        'TEXT'
+      ),
+      'content': GObject.ParamSpec.string(
+        'content', 'Content', 'Clipboard content',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        ''
+      ),
+      'copy-date': GObject.ParamSpec.string(
+        'copy-date', 'Copy Date', 'When item was copied',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        ''
+      ),
+      'is-favorite': GObject.ParamSpec.boolean(
+        'is-favorite', 'Is Favorite', 'Whether item is marked as favorite',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        false
+      ),
+      'match-value': GObject.ParamSpec.string(
+        'match-value', 'Match Value', 'Value for matching duplicates',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        ''
+      ),
+      'search-value': GObject.ParamSpec.string(
+        'search-value', 'Search Value', 'Value for searching',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        ''
+      ),
+      'meta-data': GObject.ParamSpec.string(
+        'meta-data', 'Meta Data', 'Additional metadata',
+        GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+        ''
+      ),
+    },
+  },
+  class ClipboardResource extends Gom.Resource {
+    declare _id: number | undefined;
+    declare _item_type: ItemType | undefined;
+    declare _content: string | undefined;
+    declare _copy_date: string | undefined;
+    declare _is_favorite: boolean | undefined;
+    declare _match_value: string | undefined;
+    declare _search_value: string | undefined;
+    declare _meta_data: string | undefined;
+
+    // Property accessors
+    get id() { return this._id || 0; }
+    set id(value) { this._id = value; }
+
+    get item_type() { return this._item_type || 'TEXT'; }
+    set item_type(value) { this._item_type = value; }
+
+    get content() { return this._content || ''; }
+    set content(value) { this._content = value; }
+
+    get copy_date() { return this._copy_date || ''; }
+    set copy_date(value) { this._copy_date = value; }
+
+    get is_favorite() { return this._is_favorite || false; }
+    set is_favorite(value) { this._is_favorite = value; }
+
+    get match_value() { return this._match_value || ''; }
+    set match_value(value) { this._match_value = value; }
+
+    get search_value() { return this._search_value || ''; }
+    set search_value(value) { this._search_value = value; }
+
+    get meta_data() { return this._meta_data || ''; }
+    set meta_data(value) { this._meta_data = value; }
+  }
+);
+
+Gom.Resource.set_table.call(ClipboardResource, 'clipboard');
+Gom.Resource.set_primary_key.call(ClipboardResource, 'id');
 
 /**
  * Simple unescape function for strings stored in database
@@ -40,32 +131,6 @@ function unescape_string(input: string): string {
     return input;
   }
 }
-
-// Define the GOM Resource class
-const ClipboardResource = GObject.registerClass({
-  GTypeName: 'PanoClipboardResource',
-  Properties: {
-    'id': GObject.ParamSpec.int64('id', 'ID', 'Item ID',
-      GObject.ParamFlags.READWRITE, 0, GLib.MAXINT64, 0),
-    'itemType': GObject.ParamSpec.string('itemType', 'Item Type', 'Type of clipboard item',
-      GObject.ParamFlags.READWRITE, ''),
-    'content': GObject.ParamSpec.string('content', 'Content', 'Clipboard content',
-      GObject.ParamFlags.READWRITE, ''),
-    'copyDate': GObject.ParamSpec.string('copyDate', 'Copy Date', 'ISO date string',
-      GObject.ParamFlags.READWRITE, ''),
-    'isFavorite': GObject.ParamSpec.int('isFavorite', 'Is Favorite', 'Favorite status',
-      GObject.ParamFlags.READWRITE, 0, 1, 0),
-    'matchValue': GObject.ParamSpec.string('matchValue', 'Match Value', 'Value for matching',
-      GObject.ParamFlags.READWRITE, ''),
-    'searchValue': GObject.ParamSpec.string('searchValue', 'Search Value', 'Search value',
-      GObject.ParamFlags.READWRITE, ''),
-    'metaData': GObject.ParamSpec.string('metaData', 'Meta Data', 'Additional metadata',
-      GObject.ParamFlags.READWRITE, ''),
-  },
-}, class ClipboardResource extends Gom.Resource {
-  static get table() { return 'clipboard'; }
-  static get primary_key() { return 'id'; }
-});
 
 // Query classes for compatibility
 interface QueryCondition {
@@ -106,7 +171,7 @@ export class ClipboardQueryBuilder {
 
   withItemTypes(itemTypes?: ItemType[] | null) {
     if (itemTypes !== null && itemTypes !== undefined) {
-      this.conditions.push({ field: 'itemType', op: 'in', value: itemTypes });
+      this.conditions.push({ field: 'item-type', op: 'in', value: itemTypes });
     }
     return this;
   }
@@ -120,7 +185,7 @@ export class ClipboardQueryBuilder {
 
   withMatchValue(matchValue?: string | null) {
     if (matchValue !== null && matchValue !== undefined) {
-      this.conditions.push({ field: 'matchValue', op: 'eq', value: matchValue });
+      this.conditions.push({ field: 'match-value', op: 'eq', value: matchValue });
     }
     return this;
   }
@@ -134,14 +199,14 @@ export class ClipboardQueryBuilder {
 
   withContainingSearchValue(searchValue?: string | null) {
     if (searchValue !== null && searchValue !== undefined) {
-      this.conditions.push({ field: 'searchValue', op: 'like', value: `%${searchValue}%` });
+      this.conditions.push({ field: 'search-value', op: 'like', value: `%${searchValue}%` });
     }
     return this;
   }
 
   withFavorites(include: boolean) {
     if (include !== null && include !== undefined) {
-      this.conditions.push({ field: 'isFavorite', op: 'eq', value: +include });
+      this.conditions.push({ field: 'is-favorite', op: 'eq', value: include });
     }
     return this;
   }
@@ -152,88 +217,71 @@ export class ClipboardQueryBuilder {
 }
 
 class Database {
-  private repository: Gom.Repository | null = null;
-  private adapter: Gom.Adapter | null = null;
-
-  private buildFilter(query: ClipboardQuery): Gom.Filter | null {
-    if (query.conditions.length === 0) {
-      return null;
-    }
-
-    const filters: Gom.Filter[] = [];
-    
-    for (const condition of query.conditions) {
-      switch (condition.op) {
-        case 'eq':
-          filters.push(Gom.Filter.new_eq(ClipboardResource.$gtype, condition.field, condition.value));
-          break;
-        case 'like':
-          filters.push(Gom.Filter.new_like(ClipboardResource.$gtype, condition.field, condition.value));
-          break;
-        case 'in':
-          // For IN conditions, create OR filter with multiple EQ conditions
-          const orFilters: Gom.Filter[] = [];
-          for (const value of condition.value) {
-            orFilters.push(Gom.Filter.new_eq(ClipboardResource.$gtype, condition.field, value));
-          }
-          if (orFilters.length === 1) {
-            const firstFilter = orFilters[0];
-            if (firstFilter) filters.push(firstFilter);
-          } else if (orFilters.length > 1) {
-            const firstFilter = orFilters[0];
-            const secondFilter = orFilters[1];
-            if (firstFilter && secondFilter) {
-              let combinedFilter = Gom.Filter.new_or(firstFilter, secondFilter);
-              for (let i = 2; i < orFilters.length; i++) {
-                const currentFilter = orFilters[i];
-                if (currentFilter) {
-                  combinedFilter = Gom.Filter.new_or(combinedFilter, currentFilter);
-                }
-              }
-              filters.push(combinedFilter);
-            }
-          }
-          break;
-      }
-    }
-
-    // Combine all filters with AND
-    if (filters.length === 0) {
-      return null;
-    } else if (filters.length === 1) {
-      const singleFilter = filters[0];
-      return singleFilter || null;
-    } else {
-      const firstFilter = filters[0];
-      const secondFilter = filters[1];
-      if (!firstFilter || !secondFilter) return null;
-      
-      let combinedFilter = Gom.Filter.new_and(firstFilter, secondFilter);
-      for (let i = 2; i < filters.length; i++) {
-        const currentFilter = filters[i];
-        if (currentFilter) {
-          combinedFilter = Gom.Filter.new_and(combinedFilter, currentFilter);
-        }
-      }
-      return combinedFilter;
-    }
-  }
+  private repository: any = null;
+  private adapter: any = null;
+  private dbPath: string | null = null;
+  private attemptedReset = false;
 
   setup(dbPath: string) {
     try {
-      this.adapter = Gom.Adapter.new();
+      this.dbPath = dbPath;
+      this.adapter = (Gom.Adapter as any).new();
       this.adapter.open_sync(`${dbPath}/pano.db`);
-      
-      this.repository = Gom.Repository.new(this.adapter);
-      
-      // Migrate/create the table structure
-      this.repository.automatic_migrate_sync(1, [ClipboardResource.$gtype]);
-      
+
+      this.repository = (Gom.Repository as any).new(this.adapter);
+
+      // Use automatic migration to create/update the database schema
+      const object_types = [ClipboardResource];
+      const migrated = this.repository.automatic_migrate_sync(1, object_types);
+      if (!migrated) {
+        debug('Failed to migrate database schema');
+        throw new Error('Database migration failed');
+      }
+
       debug('Database setup completed');
     } catch (error) {
       debug(`Database setup error: ${error}`);
       throw error;
     }
+  }
+
+  private resetDatabase() {
+    if (!this.dbPath) {
+      return;
+    }
+
+    try {
+      this.shutdown();
+    } catch (shutdownError) {
+      debug(`Database reset shutdown error: ${shutdownError}`);
+    }
+
+    try {
+      const dbFile = GLib.build_filenamev([this.dbPath, 'pano.db']);
+      if (GLib.file_test(dbFile, GLib.FileTest.EXISTS)) {
+        GLib.unlink(dbFile);
+      }
+    } catch (resetError) {
+      debug(`Database reset unlink error: ${resetError}`);
+    }
+
+    this.setup(this.dbPath);
+  }
+
+  private tryResetOnSchemaError(error: unknown): boolean {
+    if (!this.dbPath || this.attemptedReset) {
+      return false;
+    }
+
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes('no such column') && !message.includes('has no column named')) {
+      return false;
+    }
+
+    debug('Resetting database due to schema mismatch');
+    this.attemptedReset = true;
+    this.resetDatabase();
+    return true;
   }
 
   save(dbItem: SaveDBItem): DBItem | null {
@@ -243,30 +291,38 @@ class Database {
     }
 
     try {
-      const resource = new ClipboardResource() as any;
-      resource.repository = this.repository;
-      resource.itemType = dbItem.itemType;
-      resource.content = dbItem.content;
-      resource.copyDate = dbItem.copyDate.toISOString();
-      resource.isFavorite = +dbItem.isFavorite;
-      resource.matchValue = dbItem.matchValue;
-      resource.searchValue = dbItem.searchValue || null;
-      resource.metaData = dbItem.metaData || null;
-      
-      if (resource.save_sync()) {
-        return {
-          id: (resource as any).id,
-          itemType: dbItem.itemType,
-          content: dbItem.content,
-          copyDate: dbItem.copyDate,
-          isFavorite: dbItem.isFavorite,
-          matchValue: dbItem.matchValue,
-          searchValue: dbItem.searchValue,
-          metaData: dbItem.metaData,
-        };
+      const resource = new ClipboardResource({
+        repository: this.repository,
+        item_type: dbItem.itemType,
+        content: dbItem.content,
+        copy_date: dbItem.copyDate.toISOString(),
+        is_favorite: dbItem.isFavorite,
+        match_value: dbItem.matchValue,
+        search_value: dbItem.searchValue || '',
+        meta_data: dbItem.metaData || '',
+      });
+
+      const success = resource.save_sync();
+      if (!success) {
+        debug('Failed to save resource');
+        return null;
       }
+
+      return {
+        id: resource.id,
+        itemType: dbItem.itemType,
+        content: dbItem.content,
+        copyDate: dbItem.copyDate,
+        isFavorite: dbItem.isFavorite,
+        matchValue: dbItem.matchValue,
+        searchValue: dbItem.searchValue,
+        metaData: dbItem.metaData,
+      };
     } catch (error) {
       debug(`Save error: ${error}`);
+      if (this.tryResetOnSchemaError(error)) {
+        return this.save(dbItem);
+      }
     }
     return null;
   }
@@ -278,26 +334,36 @@ class Database {
     }
 
     try {
-      const filter = Gom.Filter.new_eq(ClipboardResource.$gtype, 'id', dbItem.id);
-      const results = this.repository.find_sync(ClipboardResource.$gtype, filter);
-      
-      if (results && results.get_count() > 0) {
-        results.fetch_sync(0, results.get_count());
-        const resource = results.get_index(0) as any; // ClipboardResource
-        
-        resource.itemType = dbItem.itemType;
-        resource.content = dbItem.content;
-        resource.copyDate = dbItem.copyDate.toISOString();
-        resource.isFavorite = +dbItem.isFavorite;
-        resource.matchValue = dbItem.matchValue;
-        resource.searchValue = dbItem.searchValue || null;
-        resource.metaData = dbItem.metaData || null;
-        
-        resource.save_sync();
-        return dbItem;
+      // First find the existing resource
+      const filter = Gom.Filter.new_eq(ClipboardResource, 'id', dbItem.id);
+      const resource = this.repository.find_one_sync(ClipboardResource, filter);
+
+      if (!resource) {
+        debug(`Resource with id ${dbItem.id} not found`);
+        return null;
       }
+
+      // Update the properties
+      resource.item_type = dbItem.itemType;
+      resource.content = dbItem.content;
+      resource.copy_date = dbItem.copyDate.toISOString();
+      resource.is_favorite = dbItem.isFavorite;
+      resource.match_value = dbItem.matchValue;
+      resource.search_value = dbItem.searchValue || '';
+      resource.meta_data = dbItem.metaData || '';
+
+      const success = resource.save_sync();
+      if (!success) {
+        debug('Failed to update resource');
+        return null;
+      }
+
+      return dbItem;
     } catch (error) {
       debug(`Update error: ${error}`);
+      if (this.tryResetOnSchemaError(error)) {
+        return this.update(dbItem);
+      }
     }
     return null;
   }
@@ -309,16 +375,20 @@ class Database {
     }
 
     try {
-      const filter = Gom.Filter.new_eq(ClipboardResource.$gtype, 'id', id);
-      const results = this.repository.find_sync(ClipboardResource.$gtype, filter);
-      
-      if (results && results.get_count() > 0) {
-        results.fetch_sync(0, results.get_count());
-        const resource = results.get_index(0);
-        resource.delete_sync();
+      const filter = Gom.Filter.new_eq(ClipboardResource, 'id', id);
+      const resource = this.repository.find_one_sync(ClipboardResource, filter);
+
+      if (resource) {
+        const success = resource.delete_sync();
+        if (!success) {
+          debug(`Failed to delete resource with id ${id}`);
+        }
       }
     } catch (error) {
       debug(`Delete error: ${error}`);
+      if (this.tryResetOnSchemaError(error)) {
+        this.delete(id);
+      }
     }
   }
 
@@ -329,57 +399,82 @@ class Database {
     }
 
     try {
-      const filter = this.buildFilter(clipboardQuery);
-      
-      // Create sorting for copyDate descending
-      const sorting = new Gom.Sorting();
-      sorting.add(ClipboardResource.$gtype, 'copyDate', Gom.SortingMode.DESCENDING);
-      
-      let results: Gom.ResourceGroup;
-      if (filter) {
-        results = this.repository.find_sorted_sync(ClipboardResource.$gtype, filter, sorting);
-      } else {
-        results = this.repository.find_sorted_sync(ClipboardResource.$gtype, null, sorting);
-      }
-      
-      if (!results) {
+      const group = this.repository.find_sync(ClipboardResource, null);
+      if (!group) {
         return [];
       }
 
-      const count = results.get_count();
-      if (count === 0) {
-        return [];
+      const count = group.get_count();
+
+      if (count > 0) {
+        group.fetch_sync(0, count);
       }
 
-      // Fetch all resources
-      results.fetch_sync(0, count);
-      
-      // Apply offset and limit manually
-      let startIndex = clipboardQuery.offsetValue || 0;
-      let endIndex = count;
-      
-      if (clipboardQuery.limitValue && clipboardQuery.limitValue > 0) {
-        endIndex = Math.min(startIndex + clipboardQuery.limitValue, count);
-      }
-      
+      const fieldMap: Record<string, keyof DBItem> = {
+        'item-type': 'itemType',
+        'copy-date': 'copyDate',
+        'is-favorite': 'isFavorite',
+        'match-value': 'matchValue',
+        'search-value': 'searchValue',
+        'meta-data': 'metaData',
+      };
+
       const items: DBItem[] = [];
-      for (let i = startIndex; i < endIndex; i++) {
-        const resource = results.get_index(i) as any;
-        items.push({
-          id: resource.id,
-          itemType: resource.itemType as ItemType,
-          content: unescape_string(resource.content),
-          copyDate: new Date(resource.copyDate),
-          isFavorite: !!resource.isFavorite,
-          matchValue: unescape_string(resource.matchValue),
-          searchValue: resource.searchValue ? unescape_string(resource.searchValue) : undefined,
-          metaData: resource.metaData,
-        });
+      for (let i = 0; i < count; i++) {
+        const resource = group.get_index(i);
+        if (resource) {
+          items.push({
+            id: resource.id,
+            itemType: resource.item_type as ItemType,
+            content: unescape_string(resource.content),
+            copyDate: new Date(resource.copy_date),
+            isFavorite: resource.is_favorite,
+            matchValue: unescape_string(resource.match_value),
+            searchValue: resource.search_value ? unescape_string(resource.search_value) : undefined,
+            metaData: resource.meta_data,
+          });
+        }
       }
-      
-      return items;
+
+      const filtered = items.filter((item) => {
+        return clipboardQuery.conditions.every((condition) => {
+          const dbField = fieldMap[condition.field] ?? (condition.field as keyof DBItem);
+          const value = item[dbField];
+
+          if (condition.op === 'eq') {
+            if (value instanceof Date) {
+              return value.toISOString() === String(condition.value);
+            }
+            return value === condition.value;
+          }
+
+          if (condition.op === 'like') {
+            if (typeof value !== 'string') {
+              return false;
+            }
+            const needle = String(condition.value).replace(/%/g, '').toLowerCase();
+            return value.toLowerCase().includes(needle);
+          }
+
+          if (condition.op === 'in') {
+            const values: any[] = Array.isArray(condition.value) ? condition.value : [];
+            return values.includes(value);
+          }
+
+          return true;
+        });
+      });
+
+      const jsStart = clipboardQuery.offsetValue || 0;
+      const limit = clipboardQuery.limitValue ?? -1;
+      const jsEnd = limit > -1 ? Math.min(jsStart + limit, filtered.length) : filtered.length;
+
+      return filtered.slice(jsStart, jsEnd);
     } catch (error) {
       debug(`Query error: ${error}`);
+      if (this.tryResetOnSchemaError(error)) {
+        return this.query(clipboardQuery);
+      }
       return [];
     }
   }

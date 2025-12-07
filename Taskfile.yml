@@ -16,8 +16,19 @@ tasks:
     cmds:
       - yarn build
 
+  add-dev-extension:
+    desc: "Install/Update dist/ to user directory for development"
+    # deps: [build]
+    cmds:
+      - rsync -av --delete dist/ ~/.local/share/gnome-shell/extensions/pano@elhan.io/
+
+  remove-dev-extension:
+    desc: "Remove extension from user directory"
+    cmds:
+      - rm -rf ~/.local/share/gnome-shell/extensions/pano@elhan.io
+
   dev:
     desc: "Build and test extension in nested GNOME Shell session"
-    deps: [build]
+    deps: [add-dev-extension]
     cmds:
       - ./test-nested.nu nested
