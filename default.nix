@@ -6,8 +6,8 @@
 ,
 }:
 
-# This package assumes you've already built with `yarn build`
-# and the dist/ directory exists with the compiled extension.
+# This package fetches pre-built release artifacts from GitHub.
+# Releases are created by GitHub Actions when tags are pushed.
 #
 # Usage in your NixOS config:
 #   environment.systemPackages = [
@@ -22,6 +22,13 @@
 stdenv.mkDerivation (finalAttrs: {
   pname = "gnome-shell-extension-pano";
   version = "24-gom";
+
+  # TODO: Switch to GitHub release once flake can be used in CI
+  # For now, dist/ must be committed to git (or built locally with `yarn build`)
+  # src = fetchzip {
+  #   url = "https://github.com/tennox/gnome-shell-pano/releases/download/v24-gom/pano@elhan.io.zip";
+  #   hash = "sha256-...";
+  # };
 
   src = ./dist;
 
