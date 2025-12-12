@@ -69,6 +69,10 @@ in
     };
     nixpkgs-fmt.enable = true; # nix formatting
     nil.enable = true; # nix check
+    prettier = {
+      enable = true;
+      excludes = [ "node_modules" "dist" "result" "flake.lock" ];
+    };
   };
 
   difftastic.enable = true; # enable semantic diffs - https://devenv.sh/integrations/difftastic/
