@@ -41,6 +41,13 @@ jobs:
       - name: Build Extension
         run: yarn run build
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 90
+
       # Tests disabled - Gom typelib not available in CI environment
       # - name: Prepare Test Runner
       #   run: |
