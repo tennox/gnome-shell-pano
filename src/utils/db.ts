@@ -1,5 +1,6 @@
-// Hardcode Gom typelib path for NixOS
-imports.gi.GIRepository.Repository.prepend_search_path('/nix/store/32mj4p8wzn03cx7zvaydz298zk0sc64p-gom-0.5.3/lib/girepository-1.0');
+// Gom typelib should be available via system GIRepository paths or GI_TYPELIB_PATH
+// For NixOS: Nix build injects prepend_search_path at build time
+// For development: devenv.nix sets GI_TYPELIB_PATH environment variable
 
 const GObject = (imports.gi as any).GObject as any;
 const GLib = (imports.gi as any).GLib as any;
@@ -29,45 +30,63 @@ const ClipboardResource = GObject.registerClass(
     GTypeName: 'PanoClipboardResource',
     Extends: Gom.Resource,
     Properties: {
-      'id': GObject.ParamSpec.int(
-        'id', 'ID', 'Resource ID',
+      id: GObject.ParamSpec.int(
+        'id',
+        'ID',
+        'Resource ID',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        0, 2147483647, 0
+        0,
+        2147483647,
+        0,
       ),
       'item-type': GObject.ParamSpec.string(
-        'item-type', 'Item Type', 'Type of clipboard item',
+        'item-type',
+        'Item Type',
+        'Type of clipboard item',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        'TEXT'
+        'TEXT',
       ),
-      'content': GObject.ParamSpec.string(
-        'content', 'Content', 'Clipboard content',
+      content: GObject.ParamSpec.string(
+        'content',
+        'Content',
+        'Clipboard content',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        ''
+        '',
       ),
       'copy-date': GObject.ParamSpec.string(
-        'copy-date', 'Copy Date', 'When item was copied',
+        'copy-date',
+        'Copy Date',
+        'When item was copied',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        ''
+        '',
       ),
       'is-favorite': GObject.ParamSpec.boolean(
-        'is-favorite', 'Is Favorite', 'Whether item is marked as favorite',
+        'is-favorite',
+        'Is Favorite',
+        'Whether item is marked as favorite',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        false
+        false,
       ),
       'match-value': GObject.ParamSpec.string(
-        'match-value', 'Match Value', 'Value for matching duplicates',
+        'match-value',
+        'Match Value',
+        'Value for matching duplicates',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        ''
+        '',
       ),
       'search-value': GObject.ParamSpec.string(
-        'search-value', 'Search Value', 'Value for searching',
+        'search-value',
+        'Search Value',
+        'Value for searching',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        ''
+        '',
       ),
       'meta-data': GObject.ParamSpec.string(
-        'meta-data', 'Meta Data', 'Additional metadata',
+        'meta-data',
+        'Meta Data',
+        'Additional metadata',
         GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-        ''
+        '',
       ),
     },
   },
@@ -82,30 +101,62 @@ const ClipboardResource = GObject.registerClass(
     declare _meta_data: string | undefined;
 
     // Property accessors
-    get id() { return this._id || 0; }
-    set id(value) { this._id = value; }
+    get id() {
+      return this._id || 0;
+    }
+    set id(value) {
+      this._id = value;
+    }
 
-    get item_type() { return this._item_type || 'TEXT'; }
-    set item_type(value) { this._item_type = value; }
+    get item_type() {
+      return this._item_type || 'TEXT';
+    }
+    set item_type(value) {
+      this._item_type = value;
+    }
 
-    get content() { return this._content || ''; }
-    set content(value) { this._content = value; }
+    get content() {
+      return this._content || '';
+    }
+    set content(value) {
+      this._content = value;
+    }
 
-    get copy_date() { return this._copy_date || ''; }
-    set copy_date(value) { this._copy_date = value; }
+    get copy_date() {
+      return this._copy_date || '';
+    }
+    set copy_date(value) {
+      this._copy_date = value;
+    }
 
-    get is_favorite() { return this._is_favorite || false; }
-    set is_favorite(value) { this._is_favorite = value; }
+    get is_favorite() {
+      return this._is_favorite || false;
+    }
+    set is_favorite(value) {
+      this._is_favorite = value;
+    }
 
-    get match_value() { return this._match_value || ''; }
-    set match_value(value) { this._match_value = value; }
+    get match_value() {
+      return this._match_value || '';
+    }
+    set match_value(value) {
+      this._match_value = value;
+    }
 
-    get search_value() { return this._search_value || ''; }
-    set search_value(value) { this._search_value = value; }
+    get search_value() {
+      return this._search_value || '';
+    }
+    set search_value(value) {
+      this._search_value = value;
+    }
 
-    get meta_data() { return this._meta_data || ''; }
-    set meta_data(value) { this._meta_data = value; }
-  }
+    get meta_data() {
+      return this._meta_data || '';
+    }
+    set meta_data(value) {
+      this._meta_data = value;
+    }
+  },
 );
 
 Gom.Resource.set_table.call(ClipboardResource, 'clipboard');

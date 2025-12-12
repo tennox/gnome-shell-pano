@@ -58,14 +58,14 @@ def test_nested_wayland [] {
     $env.MUTTER_DEBUG_DUMMY_MODE_SPECS = "1200x800"
     $env.MUTTER_DEBUG_DUMMY_MONITOR_SCALES = "1"
 
-    # Add Gom typelib path for libgom database support
-    let gom_typelib_path = "/nix/store/32mj4p8wzn03cx7zvaydz298zk0sc64p-gom-0.5.3/lib/girepository-1.0"
-    $env.GI_TYPELIB_PATH = if ($env.GI_TYPELIB_PATH? | is-empty) {
-        $gom_typelib_path
+    # GI_TYPELIB_PATH should be set by devenv.nix for Gom support
+    # Check if it's configured properly
+    if ($env.GI_TYPELIB_PATH? | is-empty) {
+        print "⚠️  Warning: GI_TYPELIB_PATH not set. Gom typelib may not be found."
+        print "   Make sure you're running in devenv shell (direnv should load it automatically)"
     } else {
-        $"($gom_typelib_path):($env.GI_TYPELIB_PATH)"
+        print $"   - GI_TYPELIB_PATH: ($env.GI_TYPELIB_PATH)"
     }
-    print $"   - GI_TYPELIB_PATH: ($env.GI_TYPELIB_PATH)"
 
     try {
         ^dbus-run-session gnome-shell --nested --wayland

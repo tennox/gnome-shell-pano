@@ -28,14 +28,21 @@ in
     gcc # needed for some npm packages
     nodePackages.typescript-language-server # many editors benefit from this
     glib # for glib-compile-schemas command
+    gom # for Gom GObject Data Mapper (database ORM)
 
     # For nested GNOME session testing
     xvfb-run
 
-    # Search for packages: https://search.nixos.org/packages?channel=unstable&query=cowsay 
+    # Search for packages: https://search.nixos.org/packages?channel=unstable&query=cowsay
     # (note: this searches on unstable channel, you might need to use pkgs-latest for some):
     pkgs-latest.go-task
   ];
+
+  env = {
+    # Set GI_TYPELIB_PATH to include gom for development/testing
+    # This allows GIRepository to find Gom typelibs without hardcoded paths
+    GI_TYPELIB_PATH = "${pkgs.gom}/lib/girepository-1.0";
+  };
 
   scripts = {
     # Docs: https://devenv.sh/scripts/

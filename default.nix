@@ -43,9 +43,9 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   preInstall = ''
-    # Patch the hardcoded Nix store path for gom to use the actual package path
-    substituteInPlace extension.js \
-      --replace-fail "/nix/store/32mj4p8wzn03cx7zvaydz298zk0sc64p-gom-0.5.3/lib/girepository-1.0" "${gom}/lib/girepository-1.0"
+    # Inject Gom typelib path at the beginning of extension.js
+    # Source code no longer has hardcoded path - we inject it during build for NixOS
+    sed -i "1i imports.gi.GIRepository.Repository.prepend_search_path('${gom}/lib/girepository-1.0');" extension.js
 
     # Add gsound path if the extension uses it
     if grep -q "gi://GSound" extension.js; then
