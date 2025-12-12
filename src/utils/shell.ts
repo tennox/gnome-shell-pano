@@ -1,7 +1,7 @@
 import Gio from '@girs/gio-2.0';
 import GLib from '@girs/glib-2.0';
 import type { ExtensionBase } from '@girs/gnome-shell/dist/extensions/sharedInternals';
-import GSound from '@girs/gsound-1.0';
+// import GSound from '@girs/gsound-1.0';
 
 export const logger =
   (prefix: string) =>
@@ -168,35 +168,38 @@ export const loadInterfaceXML = (ext: ExtensionBase, iface: string): any => {
   return null;
 };
 
-let soundContext: null | GSound.Context = null;
+// Audio disabled for now - GSound typelib not available
+// let soundContext: null | GSound.Context = null;
 
 export const playAudio = () => {
-  try {
-    if (!soundContext) {
-      soundContext = new GSound.Context();
-      soundContext.init(null);
-    }
-
-    const attr_event_id = GSound.ATTR_EVENT_ID;
-
-    //TODO: log this in a better way!
-    if (attr_event_id == null) {
-      console.error("Can't use GSound.ATTR_EVENT_ID since it's null!");
-      return;
-    }
-    soundContext.play_simple(
-      {
-        [attr_event_id]: 'message',
-      },
-      null,
-    );
-  } catch (err) {
-    debug(`failed to play audio: ${err}`);
-  }
+  // No-op - audio disabled
+  // try {
+  //   if (!soundContext) {
+  //     soundContext = new GSound.Context();
+  //     soundContext.init(null);
+  //   }
+  //
+  //   const attr_event_id = GSound.ATTR_EVENT_ID;
+  //
+  //   //TODO: log this in a better way!
+  //   if (attr_event_id == null) {
+  //     console.error("Can't use GSound.ATTR_EVENT_ID since it's null!");
+  //     return;
+  //   }
+  //   soundContext.play_simple(
+  //     {
+  //       [attr_event_id]: 'message',
+  //     },
+  //     null,
+  //   );
+  // } catch (err) {
+  //   debug(`failed to play audio: ${err}`);
+  // }
 };
 
 export const removeSoundContext = () => {
-  soundContext = null;
+  // No-op - audio disabled
+  // soundContext = null;
 };
 
 export let debounceIds: number[] = [];

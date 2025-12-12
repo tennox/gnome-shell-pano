@@ -379,19 +379,30 @@ function converter(color: string): string | null {
   }
 }
 
+const deletingIds = new Set<number>();
+
 export const removeItemResources = (ext: ExtensionBase, dbItem: DBItem) => {
-  db.delete(dbItem.id);
-  if (dbItem.itemType === 'LINK') {
-    const { image } = JSON.parse(dbItem.metaData || '{}');
-    if (image && Gio.File.new_for_uri(`file://${getCachePath(ext)}/${image}.png`).query_exists(null)) {
-      Gio.File.new_for_uri(`file://${getCachePath(ext)}/${image}.png`).delete(null);
+  if (deletingIds.has(dbItem.id)) {
+    return;
+  }
+
+  deletingIds.add(dbItem.id);
+  try {
+    db.delete(dbItem.id);
+    if (dbItem.itemType === 'LINK') {
+      const { image } = JSON.parse(dbItem.metaData || '{}');
+      if (image && Gio.File.new_for_uri(`file://${getCachePath(ext)}/${image}.png`).query_exists(null)) {
+        Gio.File.new_for_uri(`file://${getCachePath(ext)}/${image}.png`).delete(null);
+      }
+    } else if (dbItem.itemType === 'IMAGE') {
+      const imageFilePath = `file://${getImagesPath(ext)}/${dbItem.content}.png`;
+      const imageFile = Gio.File.new_for_uri(imageFilePath);
+      if (imageFile.query_exists(null)) {
+        imageFile.delete(null);
+      }
     }
-  } else if (dbItem.itemType === 'IMAGE') {
-    const imageFilePath = `file://${getImagesPath(ext)}/${dbItem.content}.png`;
-    const imageFile = Gio.File.new_for_uri(imageFilePath);
-    if (imageFile.query_exists(null)) {
-      imageFile.delete(null);
-    }
+  } finally {
+    deletingIds.delete(dbItem.id);
   }
 };
 
