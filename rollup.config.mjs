@@ -171,7 +171,14 @@ const testBuilds = testFiles.map((file) => {
         constBindings: true,
       },
     },
-    external: [...testModules, ...globalDefinitionImports],
+    external: [...testModules, ...globalDefinitionImports, 'gi://Gom'],
+    onwarn(warning, warn) {
+      // Suppress unresolved dependency warning for gi://Gom (runtime GNOME library)
+      if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter === 'gi://Gom') {
+        return;
+      }
+      warn(warning);
+    },
     plugins: [
       commonjs(),
       nodeResolve({
@@ -205,7 +212,14 @@ const builds = [
         constBindings: true,
       },
     },
-    external: [...thirdParty, ...extensionModules, ...globalDefinitionImports],
+    external: [...thirdParty, ...extensionModules, ...globalDefinitionImports, 'gi://Gom'],
+    onwarn(warning, warn) {
+      // Suppress unresolved dependency warning for gi://Gom (runtime GNOME library)
+      if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter === 'gi://Gom') {
+        return;
+      }
+      warn(warning);
+    },
     plugins: [
       commonjs(),
       nodeResolve({
@@ -249,7 +263,14 @@ const builds = [
     treeshake: {
       moduleSideEffects: 'no-external',
     },
-    external: [...thirdParty, ...preferenceModules],
+    external: [...thirdParty, ...preferenceModules, 'gi://Gom'],
+    onwarn(warning, warn) {
+      // Suppress unresolved dependency warning for gi://Gom (runtime GNOME library)
+      if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter === 'gi://Gom') {
+        return;
+      }
+      warn(warning);
+    },
     plugins: [
       commonjs(),
       nodeResolve({
