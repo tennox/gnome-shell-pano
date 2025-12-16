@@ -49,8 +49,8 @@ in
     install-extension = {
       exec = ''
         yarn build
-        ln -sf "$PWD/dist" "$HOME/.local/share/gnome-shell/extensions/pano@elhan.io"
-        echo "Extension installed to ~/.local/share/gnome-shell/extensions/pano@elhan.io"
+        ln -sf "$PWD/dist" "$HOME/.local/share/gnome-shell/extensions/pano-gom@txlab.io"
+        echo "Extension installed to ~/.local/share/gnome-shell/extensions/pano-gom@txlab.io"
       '';
       description = "Build and install extension for testing";
     };

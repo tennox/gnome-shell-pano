@@ -184,7 +184,7 @@ tags
 
 # End of https://www.gitignore.io/api/vim,linux,sublimetext,visualstudiocode
 gschemas.compiled
-pano@elhan.io*.zip
+pano-gom@txlab.io*.zip
 _build
 node_modules
 @types

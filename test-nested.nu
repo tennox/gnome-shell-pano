@@ -6,8 +6,8 @@
 def main [method: string = "auto"] {
     print "🔗 Setting up test environment..."
     mkdir /tmp/gnome-shell-test-extensions
-    rm -f /tmp/gnome-shell-test-extensions/pano@elhan.io
-    ln -s $"($env.PWD)/dist" /tmp/gnome-shell-test-extensions/pano@elhan.io
+    rm -f /tmp/gnome-shell-test-extensions/pano-gom@txlab.io
+    ln -s $"($env.PWD)/dist" /tmp/gnome-shell-test-extensions/pano-gom@txlab.io
     
     # Determine which method to use
     let test_method = if $method == "auto" {
@@ -98,7 +98,7 @@ def test_xephyr [] {
     print ""
     print "   After both are running:"
     print "   - Open terminal in Xephyr session"
-    print "   - Run: gnome-extensions enable pano@elhan.io"
+    print "   - Run: gnome-extensions enable pano-gom@txlab.io"
     print "   - Test your extension"
     
     let continue = (input "Press Enter when you've started both commands and want to continue, or 'q' to quit: ")
@@ -120,12 +120,12 @@ def test_restart_shell [] {
     
     # Install to user extensions
     mkdir ~/.local/share/gnome-shell/extensions
-    rm -rf ~/.local/share/gnome-shell/extensions/pano@elhan.io
-    cp -r dist ~/.local/share/gnome-shell/extensions/pano@elhan.io
+    rm -rf ~/.local/share/gnome-shell/extensions/pano-gom@txlab.io
+    cp -r dist ~/.local/share/gnome-shell/extensions/pano-gom@txlab.io
     
     print "   Extension installed. Restarting GNOME Shell..."
     print "   Press Alt+F2, type 'r' and press Enter"
-    print "   Then enable with: gnome-extensions enable pano@elhan.io"
+    print "   Then enable with: gnome-extensions enable pano-gom@txlab.io"
 }
 
 # Show help if called with --help

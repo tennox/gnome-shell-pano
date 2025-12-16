@@ -26,7 +26,7 @@ stdenv.mkDerivation (finalAttrs: {
   # TODO: Switch to GitHub release once flake can be used in CI
   # For now, dist/ must be committed to git (or built locally with `yarn build`)
   # src = fetchzip {
-  #   url = "https://github.com/tennox/gnome-shell-pano/releases/download/v24-gom/pano@elhan.io.zip";
+  #   url = "https://github.com/tennox/gnome-shell-pano/releases/download/v24-gom/pano-gom@txlab.io.zip";
   #   hash = "sha256-...";
   # };
 
@@ -57,14 +57,14 @@ stdenv.mkDerivation (finalAttrs: {
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/share/gnome-shell/extensions/pano@elhan.io
-    cp -r . $out/share/gnome-shell/extensions/pano@elhan.io
+    mkdir -p $out/share/gnome-shell/extensions/pano-gom@txlab.io
+    cp -r . $out/share/gnome-shell/extensions/pano-gom@txlab.io
     runHook postInstall
   '';
 
   passthru = {
     extensionPortalSlug = "pano";
-    extensionUuid = "pano@elhan.io";
+    extensionUuid = "pano-gom@txlab.io";
   };
 
   meta = with lib; {

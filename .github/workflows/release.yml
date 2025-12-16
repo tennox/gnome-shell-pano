@@ -36,9 +36,9 @@ jobs:
       - name: Build an Package Extension
         run: |
           yarn run build:package
-          mv dist/pano@elhan.io.zip .
+          mv dist/pano-gom@txlab.io.zip .
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: pano@elhan.io.zip
+          files: pano-gom@txlab.io.zip
