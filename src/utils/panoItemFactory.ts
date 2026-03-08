@@ -14,6 +14,7 @@ import { LinkPanoItem } from '@pano/components/linkPanoItem';
 import { PanoItem } from '@pano/components/panoItem';
 import { TextPanoItem } from '@pano/components/textPanoItem';
 import { ClipboardContent, ClipboardManager, ContentType, FileOperation } from '@pano/utils/clipboardManager';
+import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from '@pano/utils/colorValidator';
 import { ClipboardQueryBuilder, db, DBItem } from '@pano/utils/db';
 import { getDocument, getImage } from '@pano/utils/linkParser';
 import {
@@ -54,7 +55,6 @@ import typescript from 'highlight.js/lib/languages/typescript';
 import yaml from 'highlight.js/lib/languages/yaml';
 import isUrl from 'is-url';
 import prettyBytes from 'pretty-bytes';
-import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from '@pano/utils/colorValidator';
 
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('markdown', markdown);
