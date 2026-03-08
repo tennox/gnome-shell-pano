@@ -2,14 +2,8 @@
 
 version: '3'
 
-vars:
-  GREETING: Hello, World!
-
 tasks:
-  default:
-    cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+  default: task --list-all
 
   build:
     desc: 'Build the extension'
@@ -21,6 +15,13 @@ tasks:
     # deps: [build]
     cmds:
       - rsync -av --delete dist/ ~/.local/share/gnome-shell/extensions/pano-gom@txlab.io/
+
+  install:nixos:
+    desc: 'Build via nix (applies NixOS patches) and symlink into user extension dir'
+    deps: [build]
+    cmds:
+      - nix build path:.
+      - ln -sfn $(realpath result/share/gnome-shell/extensions/pano-gom@txlab.io) ~/.local/share/gnome-shell/extensions/pano-gom@txlab.io
 
   remove-dev-extension:
     desc: 'Remove extension from user directory'
