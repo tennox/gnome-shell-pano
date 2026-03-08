@@ -70,7 +70,7 @@ in
     # Docs: https://devenv.sh/pre-commit-hooks/
     # list of pre-configured hooks: https://devenv.sh/reference/options/#pre-commithooks
     eslint = {
-      # enable = true; # TODO disabled by default as it fails if no eslint config exists
+      enable = true;
       files = "\.(js|ts|vue|jsx|tsx)$";
       fail_fast = true; # skip other pre-commit hooks if this one fails
     };
